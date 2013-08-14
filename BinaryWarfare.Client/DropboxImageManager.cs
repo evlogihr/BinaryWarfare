@@ -29,28 +29,41 @@ namespace BinaryWarfare.Client
             // Login in Dropbox
             IDropbox dropbox = dropboxServiceProvider.GetApi(oauthAccessToken.Value, oauthAccessToken.Secret);
 
-            // Create new folder
             string unitPictures = "Unit-Pics";
             string buildingPictures = "Building-Pics";
 
+            CreateDropboxFolder(dropbox, unitPictures);
+            CreateDropboxFolder(dropbox, buildingPictures);
+
+            string picturePath = "../../pic.jpg";
+            string uploadName = "pic.jpg";
+
+            UploadPicture(dropbox, picturePath, unitPictures, uploadName); 
+        }
+
+        // Uploads picture to Dropbox and adds the media url to the SQL DB
+        private static void UploadPicture(IDropbox dropbox, string picturePath, string uploadFolder, string uploadName)
+        {
+            string uploadPath = string.Format("/{0}/{1}", uploadFolder, uploadName);
+            Entry uploadFileEntry = 
+                dropbox.UploadFileAsync(new FileResource(picturePath), uploadPath).Result;
+
+            DropboxLink mediaUrl = dropbox.GetMediaLinkAsync(uploadFileEntry.Path).Result;
+
+            // TODO: Upload mediaUrl to SQL DB
+
+            //mediaUrl.Url;
+        }
+
+        private static void CreateDropboxFolder(IDropbox dropbox, string unitPictures)
+        {
             try
             {
                 Entry createFolderEntry = dropbox.CreateFolderAsync(unitPictures).Result;
             }
             catch (Exception)
-            { }
-
-            try
-            {
-                Entry createFolderEntry = dropbox.CreateFolderAsync(buildingPictures).Result;
+            { 
             }
-            catch (Exception)
-            { }
-
-            Entry uploadFileEntry = dropbox.UploadFileAsync(new FileResource("../../pic.jpg"), "/" + unitPictures + "/pic.jpg").Result;
-
-            DropboxLink sharedUrl = dropbox.GetMediaLinkAsync(uploadFileEntry.Path).Result;
-            //Process.Start(sharedUrl.Url);   
         }
 
         private static OAuthToken LoadOAuthToken()
