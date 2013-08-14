@@ -12,7 +12,6 @@ namespace BinaryWarfare.Model
 
         public User()
         {
-            this.Squads = new HashSet<Squad>();
         }
 
         public int Id { get; set; }
@@ -26,7 +25,6 @@ namespace BinaryWarfare.Model
             set
             {
                 this.username = value;
-                this.Squads.Add(new Squad() { Name = this.Username + "Squad" });
             }
         }
 

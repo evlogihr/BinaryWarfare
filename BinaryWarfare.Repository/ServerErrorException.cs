@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BinaryWarfare.WebAPI.Models
+namespace BinaryWarfare.Repository
 {
     public class ServerErrorException : Exception
     {

@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 using BinaryWarfare.Data;
 using BinaryWarfare.Model;
-using BinaryWarfare.WebAPI.Models;
 
 namespace BinaryWarfare.Repository
 {
@@ -15,7 +14,7 @@ namespace BinaryWarfare.Repository
 
         private const string ValidUsernameChars = "qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM_1234567890";
         private const string ValidNicknameChars = "qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM_1234567890 -";
-        private const int MinUsernameNicknameChars = 4;
+        private const int MinUsernameNicknameChars = 3;
         private const int MaxUsernameNicknameChars = 30;
 
         private static void ValidateSessionKey(string sessionKey)

@@ -15,14 +15,10 @@ namespace BinaryWarfare.Client
         static void Main()
         {
             Database.SetInitializer(new MigrateDatabaseToLatestVersion<BinaryWarfareContext, Configuration>());
+
             var context = new BinaryWarfareContext();
 
-            var user = new User();
-            user.Username = "Spas";
-            user.AcademyLevel = 1;
-            user.Money = 250.50M;
-            user.AuthCode = "6fa9133efe05348e430bd5a4585b595f0cb6cba3";
-            user.SessionKey = "6fa9133efe05348e430bd5a4585b595f0cb6cba3";
+            var user = new User() { Username = "Spas", AuthCode = "6fa9133efe05348e430bd5a4585b595f0cb6cba3" };
 
             context.Users.Add(user);
             context.SaveChanges();

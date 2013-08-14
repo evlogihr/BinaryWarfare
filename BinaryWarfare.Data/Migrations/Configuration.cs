@@ -5,7 +5,7 @@ namespace BinaryWarfare.Data.Migrations
     using System.Data.Entity.Migrations;
     using System.Linq;
 
-    public sealed class Configuration : DbMigrationsConfiguration<BinaryWarfare.Data.BinaryWarfareContext>
+    public sealed class Configuration : DbMigrationsConfiguration<BinaryWarfareContext>
     {
         public Configuration()
         {
@@ -13,8 +13,18 @@ namespace BinaryWarfare.Data.Migrations
             AutomaticMigrationDataLossAllowed = true;
         }
 
-        protected override void Seed(BinaryWarfare.Data.BinaryWarfareContext context)
+        protected override void Seed(BinaryWarfareContext context)
         {
+            try
+            {
+                context.Database.SqlCommand(
+@"create unique index uk_username on Users(Username)
+                create index ix_sessionkey on Users(Sessionkey)");
+            }
+            catch (Exception)
+            {
+
+            }
             //  This method will be called after migrating to the latest version.
 
             //  You can use the DbSet<T>.AddOrUpdate() helper extension method 

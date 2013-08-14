@@ -47,6 +47,7 @@
   <ItemGroup>
     <Compile Include="BaseRepository.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ServerErrorException.cs" />
     <Compile Include="UsersRepository.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -57,10 +58,6 @@
     <ProjectReference Include="..\BinaryWarfare.Model\BinaryWarfare.Model.csproj">
       <Project>{084542c0-a626-45c5-b1de-ec9b660459bd}</Project>
       <Name>BinaryWarfare.Model</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\BinaryWarfare.WebAPI\BinaryWarfare.WebAPI.csproj">
-      <Project>{6bb5839c-e8b0-475d-ab73-eb054a1a4f88}</Project>
-      <Name>BinaryWarfare.WebAPI</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
