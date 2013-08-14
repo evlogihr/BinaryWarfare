@@ -18,8 +18,8 @@ namespace BinaryWarfare.Data.Migrations
             try
             {
                 context.Database.ExecuteSqlCommand(
-@"create unique index uk_username on Users(Username)
-                create index ix_sessionkey on Users(Sessionkey)");
+"create unique index uk_username on Users(Username)");
+                //create index ix_sessionkey on Users(Sessionkey)");
             }
             catch (Exception)
             {

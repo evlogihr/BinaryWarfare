@@ -15,13 +15,14 @@ namespace BinaryWarfare.WebAPI.Controllers
         [ActionName("register")]
         public HttpResponseMessage RegisterUser(UserLoginModel user)
         {
-            var responseMsg = 
+            var responseMsg =
                 this.PerformOperation(() =>
             {
                 UsersRepository.CreateUser(user.Username, user.AuthCode);
                 var sessionKey = UsersRepository.LoginUser(user.Username, user.AuthCode);
                 return new UserLoggedModel()
                 {
+                    Username = user.Username,
                     SessionKey = sessionKey
                 };
             });
@@ -34,10 +35,10 @@ namespace BinaryWarfare.WebAPI.Controllers
         {
             var responseMsg = this.PerformOperation(() =>
             {
-                string nickname = string.Empty;
                 var sessionKey = UsersRepository.LoginUser(user.Username, user.AuthCode);
                 return new UserLoggedModel()
                 {
+                    Username = user.Username,
                     SessionKey = sessionKey
                 };
             });

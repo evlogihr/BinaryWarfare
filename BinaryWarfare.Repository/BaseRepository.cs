@@ -26,12 +26,14 @@ namespace BinaryWarfare.Repository
         //protected const string MessageTypeGameFinished = "game-finished";
         //protected const string MessageTypeGuessMade = "guess-made";
 
+        protected DbContext context;
+
         public BaseRepository()
         {
             Database.SetInitializer(new MigrateDatabaseToLatestVersion<BinaryWarfareContext, Configuration>());
         }
 
-        //protected static void ValidateUserNumber(int number)
+        //protected void ValidateUserNumber(int number)
         //{
         //    var numberString = number.ToString();
         //    if (numberString.Length != UserNumberLength || numberString.Any(digit => !char.IsDigit(digit) || digit == '0'))
@@ -50,7 +52,7 @@ namespace BinaryWarfare.Repository
         //    }
         //}
 
-        protected static User GetUser(int userId, BinaryWarfareContext context)
+        protected User GetUser(int userId, BinaryWarfareContext context)
         {
             var user = context.Users.FirstOrDefault(u => u.Id == userId);
             if (user == null)
