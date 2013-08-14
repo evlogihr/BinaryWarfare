@@ -8,25 +8,13 @@ namespace BinaryWarfare.Model
 {
     public class User
     {
-        private string username;
-
         public User()
         {
         }
 
         public int Id { get; set; }
 
-        public string Username
-        {
-            get
-            {
-                return this.username;
-            }
-            set
-            {
-                this.username = value;
-            }
-        }
+        public string Username { get; set; }
 
         public string AuthCode { get; set; }
 
