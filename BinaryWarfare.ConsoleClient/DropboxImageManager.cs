@@ -38,14 +38,14 @@ namespace BinaryWarfare.Client
             string picturePath = "../../pic.jpg";
             string uploadName = "pic.jpg";
 
-            UploadPicture(dropbox, picturePath, unitPictures, uploadName); 
+            UploadPicture(dropbox, picturePath, unitPictures, uploadName);
         }
 
         // Uploads picture to Dropbox and adds the media url to the SQL DB
         private static void UploadPicture(IDropbox dropbox, string picturePath, string uploadFolder, string uploadName)
         {
             string uploadPath = string.Format("/{0}/{1}", uploadFolder, uploadName);
-            Entry uploadFileEntry = 
+            Entry uploadFileEntry =
                 dropbox.UploadFileAsync(new FileResource(picturePath), uploadPath).Result;
 
             DropboxLink mediaUrl = dropbox.GetMediaLinkAsync(uploadFileEntry.Path).Result;
@@ -62,7 +62,7 @@ namespace BinaryWarfare.Client
                 Entry createFolderEntry = dropbox.CreateFolderAsync(unitPictures).Result;
             }
             catch (Exception)
-            { 
+            {
             }
         }
 

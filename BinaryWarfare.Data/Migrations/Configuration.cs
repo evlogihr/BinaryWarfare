@@ -17,7 +17,7 @@ namespace BinaryWarfare.Data.Migrations
         {
             try
             {
-                context.Database.SqlCommand(
+                context.Database.ExecuteSqlCommand(
 @"create unique index uk_username on Users(Username)
                 create index ix_sessionkey on Users(Sessionkey)");
             }
