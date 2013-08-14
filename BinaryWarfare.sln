@@ -1,7 +1,43 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BinaryWarfare.Model", "BinaryWarfare.Model\BinaryWarfare.Model.csproj", "{084542C0-A626-45C5-B1DE-EC9B660459BD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BinaryWarfare.Data", "BinaryWarfare.Data\BinaryWarfare.Data.csproj", "{6A049C86-B021-4822-82E9-FA1FA897BE45}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BinaryWarfare.Repository", "BinaryWarfare.Repository\BinaryWarfare.Repository.csproj", "{4A30E640-3884-408B-B771-37ABF99DBF63}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BinaryWarfare.WebAPI", "BinaryWarfare.WebAPI\BinaryWarfare.WebAPI.csproj", "{6BB5839C-E8B0-475D-AB73-EB054A1A4F88}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BinaryWarfare.Client", "BinaryWarfare.Client\BinaryWarfare.Client.csproj", "{0DB098E5-EA72-4F95-AEFF-0FF7C0E7C9DE}"
+EndProject
 Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{084542C0-A626-45C5-B1DE-EC9B660459BD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{084542C0-A626-45C5-B1DE-EC9B660459BD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{084542C0-A626-45C5-B1DE-EC9B660459BD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{084542C0-A626-45C5-B1DE-EC9B660459BD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6A049C86-B021-4822-82E9-FA1FA897BE45}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6A049C86-B021-4822-82E9-FA1FA897BE45}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6A049C86-B021-4822-82E9-FA1FA897BE45}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6A049C86-B021-4822-82E9-FA1FA897BE45}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4A30E640-3884-408B-B771-37ABF99DBF63}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4A30E640-3884-408B-B771-37ABF99DBF63}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4A30E640-3884-408B-B771-37ABF99DBF63}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4A30E640-3884-408B-B771-37ABF99DBF63}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6BB5839C-E8B0-475D-AB73-EB054A1A4F88}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6BB5839C-E8B0-475D-AB73-EB054A1A4F88}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6BB5839C-E8B0-475D-AB73-EB054A1A4F88}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6BB5839C-E8B0-475D-AB73-EB054A1A4F88}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0DB098E5-EA72-4F95-AEFF-0FF7C0E7C9DE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0DB098E5-EA72-4F95-AEFF-0FF7C0E7C9DE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0DB098E5-EA72-4F95-AEFF-0FF7C0E7C9DE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0DB098E5-EA72-4F95-AEFF-0FF7C0E7C9DE}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
