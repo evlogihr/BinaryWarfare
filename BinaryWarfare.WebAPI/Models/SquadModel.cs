@@ -10,15 +10,15 @@ namespace BinaryWarfare.WebAPI.Models
     [DataContract]
     public class SquadModel
     {
+        public SquadModel()
+        {
+        }
+
         public SquadModel(Squad squad)
         {
             this.Id = squad.Id;
             this.Name = squad.Name;
-            this.Units = new List<UnitModel>();
-            foreach (var unit in squad.Units)
-            {
-                this.Units.Add(new UnitModel(unit));
-            }
+            this.IsBusy = squad.IsBusy;
         }
 
         [DataMember(Name = "id")]
@@ -29,6 +29,9 @@ namespace BinaryWarfare.WebAPI.Models
 
         [DataMember(Name = "sessionKey")]
         public string SessionKey { get; set; }
+
+        [DataMember(Name = "isBusy")]
+        public bool IsBusy { get; set; }
 
         [DataMember(Name = "units")]
         public ICollection<UnitModel> Units { get; set; }
@@ -60,9 +63,6 @@ namespace BinaryWarfare.WebAPI.Models
         [DataMember(Name = "attackedUser")]
         public string UserName { get; set; }
 
-        [DataMember(Name = "sessionKey")]
-        public string SessionKey { get; set; }
-
         [DataMember(Name = "units")]
         public ICollection<UnitModel> Units { get; set; }
     }
@@ -70,6 +70,10 @@ namespace BinaryWarfare.WebAPI.Models
     [DataContract]
     public class SquadDetails
     {
+        public SquadDetails()
+        {
+        }
+
         public SquadDetails(Squad squad)
         {
             this.Attack = squad.Units.Sum(u => u.Attack);

@@ -36,6 +36,11 @@ namespace BinaryWarfare.Repository
             return squad;
         }
 
+        public IQueryable<Squad> All()
+        {
+            return this.entitySet;
+        }
+
         //not impelemented
 
         public Squad Update(int id, Squad item)
@@ -49,11 +54,6 @@ namespace BinaryWarfare.Repository
         }
 
         public void Delete(Squad item)
-        {
-            throw new NotImplementedException();
-        }
-
-        public IQueryable<Squad> All()
         {
             throw new NotImplementedException();
         }

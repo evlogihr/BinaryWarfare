@@ -25,11 +25,11 @@ namespace BinaryWarfare.WebAPI.Controllers
 
         [HttpPost]
         [ActionName("create")]
-        public HttpResponseMessage AddSquad(SquadModel squad)
+        public HttpResponseMessage AddSquad(SquadModel squad, string sessionKey)
         {
             var responseMsg = this.PerformOperation(() =>
             {
-                var user = ValidateUser(squad);
+                var user = ValidateUser(sessionKey);
 
                 var newSquad = new Squad() { Name = squad.Name };
                 user.Squads.Add(newSquad);
@@ -40,13 +40,13 @@ namespace BinaryWarfare.WebAPI.Controllers
             return responseMsg;
         }
 
-        [HttpGet]
+        [HttpPost]
         [ActionName("getInfo")]
-        public HttpResponseMessage GetInfo(SquadModel squad)
+        public HttpResponseMessage GetInfo(SquadModel squad, string sessionKey)
         {
             var responseMsg = this.PerformOperation(() =>
             {
-                var user = ValidateUser(squad);
+                var user = ValidateUser(sessionKey);
 
                 var dbSquad = this.repository.Get(squad.Id);
                 return new SquadDetails(dbSquad);
@@ -57,12 +57,20 @@ namespace BinaryWarfare.WebAPI.Controllers
 
         [HttpGet]
         [ActionName("getSquads")]
-        public HttpResponseMessage GetSquads(SquadModel squad)
+        public HttpResponseMessage GetSquads(string sessionKey)
         {
             var responseMsg = this.PerformOperation(() =>
             {
-                var user = ValidateUser(squad);
+                var user = ValidateUser(sessionKey);
 
+                ICollection<SquadModel> dbSquad = new List<SquadModel>();
+                var squads = this.repository.All().Where(s => s.UserId.Id == user.Id);
+                foreach (var s in squads)
+                {
+                    dbSquad.Add(new SquadModel(s));
+                }
+
+                return dbSquad;
             });
 
             return responseMsg;
@@ -92,13 +100,20 @@ namespace BinaryWarfare.WebAPI.Controllers
             return responseMsg;
         }
 
-        private Model.User ValidateUser(SquadModel squad)
+        private Model.User ValidateUser(string sessionKey)
         {
-            var user = this.repository.All().FirstOrDefault(s => s.UserId.SessionKey == squad.SessionKey).UserId;
+            var squad = this.repository.All().FirstOrDefault(s => s.UserId.SessionKey == sessionKey);
+            if (squad == null)
+            {
+                throw new ServerErrorException("Invalid squad", "INV_SQD_AUTH");
+            }
+
+            var user = squad.UserId;
             if (user == null)
             {
                 throw new ServerErrorException("Invalid user authentication", "INV_USR_AUTH");
             }
+
             return user;
         }
     }
