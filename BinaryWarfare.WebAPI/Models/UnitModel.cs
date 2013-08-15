@@ -59,6 +59,7 @@ namespace BinaryWarfare.WebAPI.Models
             this.Id = unit.Id;
             this.Attack = unit.Attack;
             this.Defence = unit.Defence;
+            this.Income = unit.Income;
         }
 
         [DataMember(Name = "id")]
@@ -69,5 +70,8 @@ namespace BinaryWarfare.WebAPI.Models
 
         [DataMember(Name = "defence")]
         public int Defence { get; set; }
+
+        [DataMember(Name = "income")]
+        public decimal Income { get; set; }
     }
 }

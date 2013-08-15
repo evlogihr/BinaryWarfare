@@ -45,12 +45,12 @@ namespace BinaryWarfare.WebAPI.Controllers
             {
                 var user = ValidateUser(sessionKey);
 
-                var allUnits = this.repository.All().Where(u => u.Squad.User.Id == user.Id);
+                //var allUnits = this.repository.All().Where(u => u.Squad.User.Id == user.Id);
 
-                var squadModel = new List<UnitDetails>();
-                foreach (var unit in allUnits)
+                var squadModel = new List<SquadDetails>();
+                foreach (var squad in user.Squads)
                 {
-                    squadModel.Add(new UnitDetails(unit));
+                    squadModel.Add(new SquadDetails(squad));
                 }
 
                 return squadModel;

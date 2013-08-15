@@ -31,7 +31,7 @@ namespace BinaryWarfare.WebAPI.Models
         public bool IsBusy { get; set; }
 
         [DataMember(Name = "units")]
-        public ICollection<UnitDetails> Units { get; set; }
+        public ICollection<UnitModel> Units { get; set; }
     }
 
     [DataContract]
@@ -71,21 +71,22 @@ namespace BinaryWarfare.WebAPI.Models
         }
 
         public SquadDetails(Squad squad)
+            : base(squad)
         {
             this.Name = squad.Name;
             this.Attack = squad.Units.Sum(u => u.Attack);
             this.Income = squad.Units.Sum(u => u.Income);
             if (base.Units == null)
             {
-                base.Units = new List<UnitDetails>();
+                base.Units = new List<UnitModel>();
             }
 
             foreach (var unit in squad.Units)
             {
-                base.Units.Add(new UnitDetails(unit));
+                base.Units.Add(new UnitModel(unit));
             }
         }
-        
+
         [DataMember(Name = "attack")]
         public int Attack { get; set; }
 

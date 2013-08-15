@@ -72,11 +72,11 @@ namespace BinaryWarfare.WebAPI.Controllers
             {
                 var user = ValidateUser(sessionKey);
 
-                ICollection<SquadModel> dbSquad = new List<SquadModel>();
+                var dbSquad = new List<SquadDetails>();
                 var squads = this.repository.All().Where(s => s.User.Id == user.Id);
                 foreach (var s in squads)
                 {
-                    dbSquad.Add(new SquadModel(s));
+                    dbSquad.Add(new SquadDetails(s));
                 }
 
                 return dbSquad;
