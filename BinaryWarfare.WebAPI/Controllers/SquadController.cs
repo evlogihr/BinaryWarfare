@@ -63,7 +63,6 @@ namespace BinaryWarfare.WebAPI.Controllers
             {
                 var user = ValidateUser(squad);
 
-
             });
 
             return responseMsg;

@@ -94,7 +94,12 @@ namespace BinaryWarfare.WebAPI.Controllers
                     throw new ServerErrorException("Invalid user authentication", "INV_USR_AUTH");
                 }
                 var users = allUsers.Where(usr => usr.Id != meUser.Id);
-                IEnumerable<UserModel> usersModels = users.Select(u => new UserModel(u));
+                var usersModels = new List<UserModel>();
+                foreach (var user in users)
+                {
+                    usersModels.Add(new UserModel(user));
+                }
+
                 return users;
             });
 
