@@ -193,7 +193,6 @@
     </Compile>
     <Compile Include="Models\BuildingModel.cs" />
     <Compile Include="Models\BuildingsModel.cs" />
-    <Compile Include="Models\DropboxImageManager.cs" />
     <Compile Include="Models\AvatarModel.cs" />
     <Compile Include="Models\SquadModel.cs" />
     <Compile Include="Models\UnitModel.cs" />
