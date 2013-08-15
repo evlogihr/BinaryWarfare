@@ -89,17 +89,18 @@ namespace BinaryWarfare.WebAPI.Controllers
 
             return responseMsg;
         }
-        
+
         [HttpGet]
         [ActionName("getMoney")]
         public HttpResponseMessage GetMoney(string sessionKey)
         {
-            ValidateUser(sessionKey);
-
             var responseMsg = this.PerformOperation(() =>
             {
-                var user = this.repository.Get(sessionKey);
-                return user.Money;
+                var user = ValidateUser(sessionKey);
+                return new UserLoggedModel()
+                {
+                    Money = user.Money
+                };
             });
 
             return responseMsg;
@@ -109,24 +110,19 @@ namespace BinaryWarfare.WebAPI.Controllers
         [ActionName("getUsers")]
         public HttpResponseMessage GetUsers(string sessionKey)
         {
-            ValidateUser(sessionKey);
 
             var responseMsg = this.PerformOperation(() =>
             {
-                var allUsers = this.repository.All();
-                var meUser = allUsers.FirstOrDefault(usr => usr.SessionKey == sessionKey);
-                if (meUser == null)
-                {
-                    throw new ServerErrorException("Invalid user authentication", "INV_USR_AUTH");
-                }
-                var users = allUsers.Where(usr => usr.Id != meUser.Id);
+                var user = ValidateUser(sessionKey);
+
+                var users = this.repository.All().Where(usr => usr.Id != user.Id);
                 var usersModels = new List<UserModel>();
-                foreach (var user in users)
+                foreach (var u in users)
                 {
-                    usersModels.Add(new UserModel(user));
+                    usersModels.Add(new UserModel(u));
                 }
 
-                return users;
+                return usersModels;
             });
 
             return responseMsg;

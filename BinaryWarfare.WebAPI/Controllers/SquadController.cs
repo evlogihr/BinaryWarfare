@@ -73,7 +73,7 @@ namespace BinaryWarfare.WebAPI.Controllers
                 var user = ValidateUser(sessionKey);
 
                 var dbSquad = new List<SquadDetails>();
-                var squads = this.repository.All().Where(s => s.User.Id == user.Id);
+                var squads = this.repository.All().Where(s => s.User.Id == user.Id).ToList();
                 foreach (var s in squads)
                 {
                     dbSquad.Add(new SquadDetails(s));
@@ -87,10 +87,12 @@ namespace BinaryWarfare.WebAPI.Controllers
 
         [HttpPost]
         [ActionName("attack")]
-        public HttpResponseMessage Attack(int squadId, string attackedUser, string sessionKey)
+        public HttpResponseMessage Attack(SquadAttackModel squadAttack, string sessionKey)
         {
             var responseMsg = this.PerformOperation(() =>
             {
+
+
 
             });
 

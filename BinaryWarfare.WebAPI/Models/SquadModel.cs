@@ -40,14 +40,11 @@ namespace BinaryWarfare.WebAPI.Models
         [DataMember(Name = "id")]
         public int Id { get; set; }
 
-        [DataMember(Name = "attackedUser")]
-        public string UserName { get; set; }
+        [DataMember(Name = "attackedUserId")]
+        public int AttackedUserId { get; set; }
 
-        [DataMember(Name = "sessionKey")]
-        public string SessionKey { get; set; }
-
-        [DataMember(Name = "units")]
-        public ICollection<UnitDetails> Units { get; set; }
+        [DataMember(Name = "squadId")]
+        public int SquadId { get; set; }
     }
 
     [DataContract]
@@ -74,8 +71,8 @@ namespace BinaryWarfare.WebAPI.Models
             : base(squad)
         {
             this.Name = squad.Name;
-            this.Attack = squad.Units.Sum(u => u.Attack);
-            this.Income = squad.Units.Sum(u => u.Income);
+            this.Attack = squad.Units.ToList().Sum(u => u.Attack);
+            this.Income = squad.Units.ToList().Sum(u => u.Income);
             if (base.Units == null)
             {
                 base.Units = new List<UnitModel>();
