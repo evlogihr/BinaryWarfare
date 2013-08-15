@@ -30,6 +30,11 @@ namespace BinaryWarfare.WebAPI.Controllers
                 this.PerformOperation(() =>
             {
                 var user = userModel.ToUser();
+                user.Money = 1024M;
+                user.Squads.Add(new Squad()
+                {
+                    Name = string.Format(userModel.Username + "Squad")
+                });
                 this.repository.Add(user);
                 var sessionKey = this.repository.Login(user);
 
@@ -80,7 +85,7 @@ namespace BinaryWarfare.WebAPI.Controllers
 
             return responseMsg;
         }
-        
+
         [HttpGet]
         [ActionName("getUsers")]
         public HttpResponseMessage GetUsers(string sessionKey)

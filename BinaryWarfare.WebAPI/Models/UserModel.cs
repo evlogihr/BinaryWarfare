@@ -35,7 +35,12 @@ namespace BinaryWarfare.WebAPI.Models
 
         internal User ToUser()
         {
-            var user = new User() { Username = base.Username, AuthCode = this.AuthCode };
+            var user = new User()
+            {
+                Username = base.Username,
+                AuthCode = this.AuthCode,
+                Squads = new List<Squad>()
+            };
             return user;
         }
     }

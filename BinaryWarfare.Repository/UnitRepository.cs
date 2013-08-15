@@ -20,65 +20,42 @@ namespace BinaryWarfare.Repository
 
         /* public members */
 
-        public void Add(Unit unit, string sessionKey)
+        public Unit Add(Unit unit)
         {
-            var user = this.context.Set<User>().FirstOrDefault(u => u.SessionKey == sessionKey);
-            if (user == null)
-            {
-                throw new ServerErrorException("Invalid user authentication", "INV_USR_AUTH");
-            }
-
-            var squad = user.Squads.FirstOrDefault(s => s.Name == user.Username + "Squad");
-            if (squad == null)
-            {
-                squad = new Squad() { Name = user.Username + "Squad" };
-                user.Squads.Add(squad);
-            }
-
-            squad.Units.Add(unit);
+            this.entitySet.Add(unit);
             context.SaveChanges();
+            return unit;
         }
 
-        public ICollection<Squad> All(string sessionKey)
+        public IQueryable<Unit> All()
         {
-            var user = this.context.Set<User>().FirstOrDefault(u => u.SessionKey == sessionKey);
-            if (user == null)
+            return this.entitySet;
+        }
+
+        public ICollection<Squad> Update(Squad squad, ICollection<Unit> units)
+        {
+            foreach (var unit in units)
             {
-                throw new ServerErrorException("Invalid user authentication", "INV_USR_AUTH");
+                squad.Units.Add(unit);
             }
 
+            this.context.SaveChanges();
+
+            var user = squad.User;
             var squads = user.Squads;
 
             return squads;
         }
 
-        public ICollection<Squad> Move(int squadId, ICollection<int> unitsIds, string sessionKey)
+        public Unit Get(int id)
         {
-            var user = this.context.Set<User>().FirstOrDefault(u => u.SessionKey == sessionKey);
-            if (user == null)
+            var unit = this.entitySet.FirstOrDefault(u => u.Id == id);
+            if (unit == null)
             {
-                throw new ServerErrorException("Invalid user authentication", "INV_USR_AUTH");
+                throw new ServerErrorException("Invalid unit Id", "INV_UNT_AUTH");
             }
 
-            var squad = user.Squads.FirstOrDefault(s => s.Id == squadId);
-            if (squad == null)
-            {
-                throw new ServerErrorException("Invalid squad", "INV_SQD_ID");
-            }
-
-            foreach (var unitId in unitsIds)
-            {
-                var unit = this.entitySet.FirstOrDefault(u => u.Id == unitId);
-                if (unit == null)
-                {
-                    throw new ServerErrorException("Invalid unit", "INV_UNT_ID");
-                }
-
-                squad.Units.Add(unit);
-            }
-
-            this.context.SaveChanges();
-            return All(sessionKey);
+            return unit;
         }
 
         //not implemented
@@ -98,22 +75,7 @@ namespace BinaryWarfare.Repository
             throw new NotImplementedException();
         }
 
-        public Unit Get(int id)
-        {
-            throw new NotImplementedException();
-        }
-
         public IQueryable<Unit> Find(System.Linq.Expressions.Expression<Func<Unit, int, bool>> predicate)
-        {
-            throw new NotImplementedException();
-        }
-
-        public IQueryable<Unit> All()
-        {
-            throw new NotImplementedException();
-        }
-
-        public Unit Add(Unit item)
         {
             throw new NotImplementedException();
         }

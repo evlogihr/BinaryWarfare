@@ -64,7 +64,7 @@ namespace BinaryWarfare.WebAPI.Controllers
                 var user = ValidateUser(sessionKey);
 
                 ICollection<SquadModel> dbSquad = new List<SquadModel>();
-                var squads = this.repository.All().Where(s => s.UserId.Id == user.Id);
+                var squads = this.repository.All().Where(s => s.User.Id == user.Id);
                 foreach (var s in squads)
                 {
                     dbSquad.Add(new SquadModel(s));
@@ -100,15 +100,16 @@ namespace BinaryWarfare.WebAPI.Controllers
             return responseMsg;
         }
 
-        private Model.User ValidateUser(string sessionKey)
+        private User ValidateUser(string sessionKey)
         {
-            var squad = this.repository.All().FirstOrDefault(s => s.UserId.SessionKey == sessionKey);
+            var squad = this.repository.All().FirstOrDefault(s => s.User.SessionKey == sessionKey);
+
             if (squad == null)
             {
                 throw new ServerErrorException("Invalid squad", "INV_SQD_AUTH");
             }
 
-            var user = squad.UserId;
+            var user = squad.User;
             if (user == null)
             {
                 throw new ServerErrorException("Invalid user authentication", "INV_USR_AUTH");

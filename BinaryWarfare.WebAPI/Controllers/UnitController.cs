@@ -15,7 +15,7 @@ namespace BinaryWarfare.WebAPI.Controllers
     [EnableCors(origins: "http://binarywarfareclient.apphb.com/", headers: "*", methods: "*")]
     public class UnitController : BaseApiController
     {
-        private UnitsRepository repository;
+        private IUnitsRepository repository;
 
         public UnitController()
         {
@@ -31,8 +31,7 @@ namespace BinaryWarfare.WebAPI.Controllers
             {
                 var unit = new Unit() { Attack = 10, Defence = 12, Income = 5, IsBusy = false };
 
-                this.repository.Add(unit, sessionKey);
-
+                this.repository.Add(unit);
             });
 
             return responseMsg;
@@ -44,11 +43,14 @@ namespace BinaryWarfare.WebAPI.Controllers
         {
             var responseMsg = this.PerformOperation(() =>
             {
-                ICollection<Squad> allSquads = this.repository.All(sessionKey);
-                ICollection<SquadModel> squadModel = new List<SquadModel>();
-                foreach (var squad in allSquads)
+                var user = ValidateUser(sessionKey);
+
+                var allUnits = this.repository.All().Where(u => u.Squad.User.Id == user.Id);
+
+                var squadModel = new List<UnitDetails>();
+                foreach (var unit in allUnits)
                 {
-                    squadModel.Add(new SquadModel(squad));
+                    squadModel.Add(new UnitDetails(unit));
                 }
 
                 return squadModel;
@@ -59,15 +61,71 @@ namespace BinaryWarfare.WebAPI.Controllers
 
         [HttpPost]
         [ActionName("moveToSquad")]
-        public HttpResponseMessage MoveToSquad(int squadId, ICollection<int> unitsIds, string sessionKey)
+        public HttpResponseMessage MoveToSquad(SquadMoveModel squadMoveModel, string sessionKey)
         {
             var responseMsg = this.PerformOperation(() =>
             {
-                var squads = this.repository.Move(squadId, unitsIds, sessionKey);
-                return squads;
+                var user = ValidateUser(sessionKey);
+                var squad = user.Squads.FirstOrDefault(s => s.Id == squadMoveModel.SquadId);
+                var units = new List<Unit>();
+                foreach (var unitId in squadMoveModel.UnitsIds)
+                {
+                    var unit = this.repository.Get(unitId);
+                    units.Add(unit);
+                }
+
+                var resultSquads = repository.Update(squad, units);
+                var resultSquadModel = new List<SquadDetails>();
+                foreach (var reSquad in resultSquads)
+                {
+                    resultSquadModel.Add(new SquadDetails(reSquad));
+                }
+
+                return resultSquadModel;
             });
 
             return responseMsg;
         }
+
+        private User ValidateUser(string sessionKey)
+        {
+            var unit = this.repository.All().FirstOrDefault(s => s.Squad.User.SessionKey == sessionKey);
+            if (unit == null)
+            {
+                throw new ServerErrorException("Invalid squad", "INV_SQD_AUTH");
+            }
+
+            var user = unit.Squad.User;
+            if (user == null)
+            {
+                throw new ServerErrorException("Invalid user authentication", "INV_USR_AUTH");
+            }
+
+            return user;
+        }
+
+        private static Squad ValidateSquad(User user)
+        {
+            var squad = user.Squads.FirstOrDefault(s => s.Name == string.Format(user.Username + "Squad"));
+            if (squad == null)
+            {
+                throw new ServerErrorException("Invalid user authentication", "INV_USR_AUTH");
+            }
+            return squad;
+        }
     }
 }
+
+/*
+var user = this.context.Set<User>().FirstOrDefault(u => u.SessionKey == sessionKey);
+            if (user == null)
+            {
+                throw new ServerErrorException("Invalid user authentication", "INV_USR_AUTH");
+            }
+
+            var squad = user.Squads.FirstOrDefault(s => s.Id == squadId);
+            if (squad == null)
+            {
+                throw new ServerErrorException("Invalid squad", "INV_SQD_ID");
+            }
+*/
