@@ -117,15 +117,8 @@ namespace BinaryWarfare.Repository
             return sessionKey;
         }
 
-        public void Logout(string sessionKey)
+        public void Logout(User user)
         {
-            ValidateSessionKey(sessionKey);
-            var user = this.entitySet.FirstOrDefault(u => u.SessionKey == sessionKey);
-            if (user == null)
-            {
-                throw new ServerErrorException("Invalid user authentication", "INV_USR_AUTH");
-            }
-
             user.SessionKey = null;
             context.SaveChanges();
         }

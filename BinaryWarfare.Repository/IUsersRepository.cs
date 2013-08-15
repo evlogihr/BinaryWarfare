@@ -10,7 +10,7 @@ namespace BinaryWarfare.Repository
     {
         string Login(User user);
 
-        void Logout(string sessionKey);
+        void Logout(User user);
 
         User Get(string sessionKey);
     }

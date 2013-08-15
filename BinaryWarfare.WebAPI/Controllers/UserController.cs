@@ -87,11 +87,11 @@ namespace BinaryWarfare.WebAPI.Controllers
         [ActionName("logout")]
         public HttpResponseMessage LogoutUser(string sessionKey)
         {
-            ValidateUser(sessionKey);
-
             var responseMsg = this.PerformOperation(() =>
             {
-                var user = this.repository.Get(sessionKey);
+                var user = ValidateUser(sessionKey);
+                user.SessionKey = null;
+                this.repository.Logout(user);
             });
 
             return responseMsg;
