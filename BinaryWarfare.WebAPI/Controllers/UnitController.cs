@@ -31,6 +31,7 @@ namespace BinaryWarfare.WebAPI.Controllers
                 var user = ValidateUser(sessionKey);
                 var unit = new Unit() { Attack = 10, Defence = 12, Income = 5, IsBusy = false };
 
+                user.Money = user.Money - 200;
                 this.repository.Add(unit);
 
                 var squadModel = new List<SquadDetails>();

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Threading;
 using System.Web.Http;
 using System.Web.Http.Cors;
 using BinaryWarfare.Data;
@@ -117,6 +118,8 @@ namespace BinaryWarfare.WebAPI.Controllers
                 {
                     var targetSum = -difference * 100;
                     var bounty = targetUser.Money - difference * 100 < 0 ? targetUser.Money : targetSum;
+
+                    System.Threading.Thread.Sleep(5000);
 
                     targetUser.Money = targetUser.Money - bounty;
                     attacker.User.Money = attacker.User.Money + bounty;
