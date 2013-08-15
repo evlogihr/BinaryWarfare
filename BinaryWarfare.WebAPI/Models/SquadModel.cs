@@ -30,4 +30,20 @@ namespace BinaryWarfare.WebAPI.Models
         [DataMember(Name = "units")]
         public ICollection<UnitModel> Units { get; set; }
     }
+
+    [DataContract]
+    public class SquadDetails
+    {
+        public SquadDetails(Squad squad)
+        {
+            this.Attack = squad.Units.Sum(u => u.Attack);
+            this.Income = squad.Units.Sum(u => u.Income); ;
+        }
+
+        [DataMember(Name = "attack")]
+        public int Attack { get; set; }
+
+        [DataMember(Name = "income")]
+        public decimal Income { get; set; }
+    }
 }
