@@ -89,6 +89,21 @@ namespace BinaryWarfare.WebAPI.Controllers
 
             return responseMsg;
         }
+        
+        [HttpGet]
+        [ActionName("getMoney")]
+        public HttpResponseMessage GetMoney(string sessionKey)
+        {
+            ValidateUser(sessionKey);
+
+            var responseMsg = this.PerformOperation(() =>
+            {
+                var user = this.repository.Get(sessionKey);
+                return user.Money;
+            });
+
+            return responseMsg;
+        }
 
         [HttpGet]
         [ActionName("getUsers")]
