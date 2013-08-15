@@ -100,5 +100,18 @@ namespace BinaryWarfare.WebAPI.Controllers
 
             return responseMsg;
         }
+
+        [HttpGet]
+        [ActionName("uploadAvatar")]
+        public HttpResponseMessage UploadAvatar(string sessionKey, string avatarPath)
+        {
+            var responseMsg = this.PerformOperation(() =>
+            {
+                var user = this.repository.Get(sessionKey);
+                user.AvatarUrl = AvatarModel.GetMediaLink(avatarPath, user.Username.ToLower());
+            });
+
+            return responseMsg;
+        }
     }
 }

@@ -24,6 +24,8 @@ namespace BinaryWarfare.Model
 
         public int AcademyLevel { get; set; }
 
+        public string AvatarUrl { get; set; }
+
         public virtual ICollection<Squad> Squads { get; set; }
     }
 }
