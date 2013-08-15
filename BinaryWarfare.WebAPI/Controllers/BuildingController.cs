@@ -48,16 +48,25 @@ namespace BinaryWarfare.WebAPI.Controllers
                 switch (building.Name.ToLower())
                 {
                     case "academy":
-                        user.Academy++;
-                        user.Money -= 1000;
+                        if (user.Money < (user.Academy + 1) * 1000)
+                        {
+                            user.Academy++;
+                            user.Money -= user.Academy * 1000;
+                        }
                         break;
-                    case "csharpyard":
-                        user.CSharpYard++;
-                        user.Money -= 1000;
+                    case "csharpyard": 
+                        if (user.Money < (user.CSharpYard + 1) * 1000)
+                        {
+                            user.CSharpYard++;
+                            user.Money -= user.CSharpYard * 1000;
+                        }
                         break;
                     case "jsgraveyard":
-                        user.JSGraveyard++;
-                        user.Money -= 1000;
+                        if (user.Money < (user.JSGraveyard + 1) * 1000)
+                        {
+                            user.JSGraveyard++;
+                            user.Money -= user.JSGraveyard * 1000;
+                        }
                         break;
                     default: break;
                 }
