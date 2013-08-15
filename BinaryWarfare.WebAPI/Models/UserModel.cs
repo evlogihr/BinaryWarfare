@@ -50,5 +50,8 @@ namespace BinaryWarfare.WebAPI.Models
     {
         [DataMember(Name = "sessionKey")]
         public string SessionKey { get; set; }
+
+        [DataMember(Name = "money")]
+        public decimal Money { get; set; }
     }
 }

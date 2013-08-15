@@ -67,8 +67,9 @@ namespace BinaryWarfare.WebAPI.Controllers
 
                 return new UserLoggedModel()
                 {
-                    Username = userModel.Username,
-                    SessionKey = sessionKey
+                    Username = user.Username,
+                    SessionKey = sessionKey,
+                    Money = user.Money
                 };
             });
 
@@ -118,34 +119,34 @@ namespace BinaryWarfare.WebAPI.Controllers
 
         [HttpPost]
         [ActionName("uploadAvatar")]
-        public HttpResponseMessage UploadAvatar(string sessionKey) 
+        public HttpResponseMessage UploadAvatar(string sessionKey)
         {
-            HttpResponseMessage result = null; 
-            var httpRequest = HttpContext.Current.Request; 
+            HttpResponseMessage result = null;
+            var httpRequest = HttpContext.Current.Request;
 
             var user = this.repository.Get(sessionKey);
 
-            if (httpRequest.Files.Count > 0) 
+            if (httpRequest.Files.Count > 0)
             {
-                foreach (string file in httpRequest.Files) 
+                foreach (string file in httpRequest.Files)
                 {
-                    var postedFile = httpRequest.Files[file]; 
-                    var filePath = HttpContext.Current.Server.MapPath("~/App_Data/" + postedFile.FileName); 
+                    var postedFile = httpRequest.Files[file];
+                    var filePath = HttpContext.Current.Server.MapPath("~/App_Data/" + postedFile.FileName);
 
-                    postedFile.SaveAs(filePath); 
-                    user.AvatarUrl = AvatarModel.GetMediaLink(filePath, user.Username.ToLower()); 
+                    postedFile.SaveAs(filePath);
+                    user.AvatarUrl = AvatarModel.GetMediaLink(filePath, user.Username.ToLower());
                 }
 
-                result = Request.CreateResponse(HttpStatusCode.Created, user.AvatarUrl); 
-            } 
-            else 
+                result = Request.CreateResponse(HttpStatusCode.Created, user.AvatarUrl);
+            }
+            else
             {
-                result = Request.CreateResponse(HttpStatusCode.BadRequest); 
+                result = Request.CreateResponse(HttpStatusCode.BadRequest);
             }
 
-            return result; 
+            return result;
         }
-        
+
         private User ValidateUser(string sessionKey)
         {
             var user = this.repository.All().FirstOrDefault(u => u.SessionKey == sessionKey);
