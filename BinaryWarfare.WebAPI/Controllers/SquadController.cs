@@ -36,6 +36,15 @@ namespace BinaryWarfare.WebAPI.Controllers
                 user.Squads.Add(newSquad);
 
                 this.repository.Add(newSquad);
+
+                var dbSquad = new List<SquadDetails>();
+                var squads = this.repository.All().Where(s => s.User.Id == user.Id).ToList();
+                foreach (var s in squads)
+                {
+                    dbSquad.Add(new SquadDetails(s));
+                }
+
+                return dbSquad;
             });
 
             return responseMsg;
@@ -91,8 +100,28 @@ namespace BinaryWarfare.WebAPI.Controllers
         {
             var responseMsg = this.PerformOperation(() =>
             {
+                var attacker = this.repository.Get(squadAttack.SquadId);
+                attacker.IsBusy = true;
 
+                var target = this.repository.All().FirstOrDefault(s => s.User.Id == squadAttack.AttackedUserId);
+                if (target == null)
+                {
+                    throw new ServerErrorException("Invalid squad", "INV_SQD_AUTH");
+                }
 
+                var targetUser = target.User;
+                int totalDefence = targetUser.Squads.Where(s => s.IsBusy == false).Sum(s => s.Units.Sum(u => u.Defence));
+                int totalAttack = attacker.Units.Sum(u => u.Attack);
+                int difference = totalDefence - totalAttack;
+                if (difference < 0)
+                {
+                    var targetSum = targetUser.Money - difference * 100;
+                    var bounty = targetSum < 0 ? targetUser.Money : targetSum;
+                    targetUser.Money -=  bounty;
+                    attacker.User.Money += bounty;
+                }
+
+                this.repository.Update(attacker.Id, attacker);
 
             });
 
