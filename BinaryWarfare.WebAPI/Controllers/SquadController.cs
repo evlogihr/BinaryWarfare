@@ -30,6 +30,7 @@ namespace BinaryWarfare.WebAPI.Controllers
             var responseMsg = this.PerformOperation(() =>
             {
                 var user = ValidateUser(sessionKey);
+                ValidateSquad(squad);
 
                 var newSquad = new Squad() { Name = squad.Name };
                 user.Squads.Add(newSquad);
@@ -38,6 +39,14 @@ namespace BinaryWarfare.WebAPI.Controllers
             });
 
             return responseMsg;
+        }
+
+        private void ValidateSquad(SquadModel squad)
+        {
+            if (squad.Name == null)
+            {
+                throw new ServerErrorException("Invalid squad name", "INV_SQD_AUTH");
+            }
         }
 
         [HttpPost]

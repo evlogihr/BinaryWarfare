@@ -22,7 +22,11 @@ namespace BinaryWarfare.Model
 
         public decimal Money { get; set; }
 
-        public int AcademyLevel { get; set; }
+        public int Academy { get; set; }
+
+        public int CSharpYard { get; set; }
+
+        public int JSGraveyard { get; set; }
 
         public string AvatarUrl { get; set; }
 
