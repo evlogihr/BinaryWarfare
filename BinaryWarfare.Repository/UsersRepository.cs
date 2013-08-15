@@ -9,7 +9,7 @@ using BinaryWarfare.Model;
 
 namespace BinaryWarfare.Repository
 {
-    public class UsersRepository : BaseRepository, IRepository<User>
+    public class UsersRepository : BaseRepository, IUsersRepository
     {
         private const string SessionKeyChars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
         private const int SessionKeyLen = 50;
@@ -120,48 +120,57 @@ namespace BinaryWarfare.Repository
         public void Logout(string sessionKey)
         {
             ValidateSessionKey(sessionKey);
-            using (context)
+            var user = this.entitySet.FirstOrDefault(u => u.SessionKey == sessionKey);
+            if (user == null)
             {
-                var user = this.entitySet.FirstOrDefault(u => u.SessionKey == sessionKey);
-                if (user == null)
-                {
-                    throw new ServerErrorException("Invalid user authentication", "INV_USR_AUTH");
-                }
-                user.SessionKey = null;
-                context.SaveChanges();
+                throw new ServerErrorException("Invalid user authentication", "INV_USR_AUTH");
             }
+
+            user.SessionKey = null;
+            context.SaveChanges();
+        }
+
+        public User Get(string sessionKey)
+        {
+            var user = this.entitySet.FirstOrDefault(u => u.SessionKey == sessionKey);
+            if (user == null)
+            {
+                throw new ServerErrorException("Invalid user authentication", "INV_USR_AUTH");
+            }
+
+            return user;
+        }
+
+        public User Get(int id)
+        {
+            throw new NotImplementedException("Method not supported for Users");
+        }
+
+        public IQueryable<User> All()
+        {
+            return this.entitySet;
         }
 
         /* methods not implemented */
 
         public User Update(int id, User item)
         {
-            throw new NotImplementedException();
+            throw new NotImplementedException("Method not supported for Users");
         }
 
         public void Delete(int id)
         {
-            throw new NotImplementedException();
+            throw new NotImplementedException("Method not supported for Users");
         }
 
         public void Delete(User item)
         {
-            throw new NotImplementedException();
-        }
-
-        public User Get(int id)
-        {
-            throw new NotImplementedException();
-        }
-
-        public IQueryable<User> All()
-        {
-            throw new NotImplementedException();
+            throw new NotImplementedException("Method not supported for Users");
         }
 
         public IQueryable<User> Find(Expression<Func<User, int, bool>> predicate)
         {
-            throw new NotImplementedException();
+            throw new NotImplementedException("Method not supported for Users");
         }
     }
 }

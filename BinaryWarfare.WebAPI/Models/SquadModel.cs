@@ -27,6 +27,42 @@ namespace BinaryWarfare.WebAPI.Models
         [DataMember(Name = "name")]
         public string Name { get; set; }
 
+        [DataMember(Name = "sessionKey")]
+        public string SessionKey { get; set; }
+
+        [DataMember(Name = "units")]
+        public ICollection<UnitModel> Units { get; set; }
+    }
+
+    [DataContract]
+    public class SquadAttackModel
+    {
+        [DataMember(Name = "id")]
+        public int Id { get; set; }
+
+        [DataMember(Name = "attackedUser")]
+        public string UserName { get; set; }
+
+        [DataMember(Name = "sessionKey")]
+        public string SessionKey { get; set; }
+
+        [DataMember(Name = "units")]
+        public ICollection<UnitModel> Units { get; set; }
+    }
+
+    [DataContract]
+    public class SquadMoveModel
+    {
+        //int squadId, ICollection<int> unitsIds, string sessionKey
+        [DataMember(Name = "id")]
+        public int Id { get; set; }
+
+        [DataMember(Name = "attackedUser")]
+        public string UserName { get; set; }
+
+        [DataMember(Name = "sessionKey")]
+        public string SessionKey { get; set; }
+
         [DataMember(Name = "units")]
         public ICollection<UnitModel> Units { get; set; }
     }

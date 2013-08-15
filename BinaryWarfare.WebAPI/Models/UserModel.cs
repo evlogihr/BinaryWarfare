@@ -10,6 +10,19 @@ namespace BinaryWarfare.WebAPI.Models
     [DataContract]
     public class UserModel
     {
+        public UserModel()
+        {
+        }
+
+        public UserModel(User user)
+        {
+            this.Id = user.Id;
+            this.Username = user.Username;
+        }
+
+        [DataMember(Name = "id")]
+        public int Id { get; set; }
+
         [DataMember(Name = "username")]
         public string Username { get; set; }
     }

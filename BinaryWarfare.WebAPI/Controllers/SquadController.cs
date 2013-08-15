@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Web.Http;
+using System.Web.Http.Cors;
 using BinaryWarfare.Data;
 using BinaryWarfare.Model;
 using BinaryWarfare.Repository;
@@ -11,6 +12,7 @@ using BinaryWarfare.WebAPI.Models;
 
 namespace BinaryWarfare.WebAPI.Controllers
 {
+    [EnableCors(origins: "http://binarywarfareclient.apphb.com/", headers: "*", methods: "*")]
     public class SquadController : BaseApiController
     {
         private SquadsRepository repository;
@@ -23,27 +25,38 @@ namespace BinaryWarfare.WebAPI.Controllers
 
         [HttpPost]
         [ActionName("create")]
-        public HttpResponseMessage AddSquad(string squadName, string sessionKey)
+        public HttpResponseMessage AddSquad(SquadModel squad)
         {
             var responseMsg = this.PerformOperation(() =>
             {
-                var squad = new Squad() { Name = squadName };
-                this.repository.Add(squad, sessionKey);
+                var newSquad = new Squad() { Name = squad.Name };
+                this.repository.Add(newSquad, squad.SessionKey);
+            });
+
+            return responseMsg;
+        }
+        
+        [HttpGet]
+        [ActionName("getInfo")]
+        public HttpResponseMessage GetInfo(SquadModel squad)
+        {
+            var responseMsg = this.PerformOperation(() =>
+            {
+                var dbSquad = this.repository.Get(squad.Id, squad.SessionKey);
+                var squadDetails = new SquadDetails(dbSquad);
+                return squadDetails;
             });
 
             return responseMsg;
         }
 
-
         [HttpGet]
-        [ActionName("getInfo")]
-        public HttpResponseMessage GetInfo(int squadId, string sessionKey)
+        [ActionName("getSquads")]
+        public HttpResponseMessage GetSquads(string sessionKey)
         {
             var responseMsg = this.PerformOperation(() =>
             {
-                var squad = this.repository.Get(squadId, sessionKey);
-                var squadDetails = new SquadDetails(squad);
-                return squadDetails;
+                
             });
 
             return responseMsg;

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Web.Http;
+using System.Web.Http.Cors;
 using BinaryWarfare.Data;
 using BinaryWarfare.Model;
 using BinaryWarfare.Repository;
@@ -11,6 +12,7 @@ using BinaryWarfare.WebAPI.Models;
 
 namespace BinaryWarfare.WebAPI.Controllers
 {
+    [EnableCors(origins: "http://binarywarfareclient.apphb.com/", headers: "*", methods: "*")]
     public class UnitController : BaseApiController
     {
         private UnitsRepository repository;
@@ -21,13 +23,14 @@ namespace BinaryWarfare.WebAPI.Controllers
             this.repository = new UnitsRepository(context);
         }
 
-        [HttpPost]
+        [HttpGet]
         [ActionName("create")]
         public HttpResponseMessage Create(string sessionKey)
         {
             var responseMsg = this.PerformOperation(() =>
             {
                 var unit = new Unit() { Attack = 10, Defence = 12, Income = 5, Busy = false };
+
                 this.repository.Add(unit, sessionKey);
 
             });
@@ -60,7 +63,8 @@ namespace BinaryWarfare.WebAPI.Controllers
         {
             var responseMsg = this.PerformOperation(() =>
             {
-                this.repository.Move(squadId, unitsIds, sessionKey);
+                var squads = this.repository.Move(squadId, unitsIds, sessionKey);
+                return squads;
             });
 
             return responseMsg;

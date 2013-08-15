@@ -8,7 +8,7 @@ using BinaryWarfare.Model;
 
 namespace BinaryWarfare.Repository
 {
-    public class UnitsRepository : BaseRepository, IRepository<Unit>
+    public class UnitsRepository : BaseRepository, IUnitsRepository
     {
         private DbSet<Unit> entitySet;
 
@@ -52,7 +52,7 @@ namespace BinaryWarfare.Repository
             return squads;
         }
 
-        public void Move(int squadId, ICollection<int> unitsIds, string sessionKey)
+        public ICollection<Squad> Move(int squadId, ICollection<int> unitsIds, string sessionKey)
         {
             var user = this.context.Set<User>().FirstOrDefault(u => u.SessionKey == sessionKey);
             if (user == null)
@@ -78,6 +78,7 @@ namespace BinaryWarfare.Repository
             }
 
             this.context.SaveChanges();
+            return All(sessionKey);
         }
 
         //not implemented

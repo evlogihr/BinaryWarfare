@@ -12,10 +12,9 @@ using BinaryWarfare.WebAPI.Models;
 
 namespace BinaryWarfare.WebAPI.Controllers
 {
-    [EnableCors(origins: "http://http://binarywarfare.apphb.com/", headers: "*", methods: "*")]
     public class UserController : BaseApiController
     {
-        private UsersRepository repository;
+        private IUsersRepository repository;
 
         public UserController()
         {
@@ -50,7 +49,14 @@ namespace BinaryWarfare.WebAPI.Controllers
         {
             var responseMsg = this.PerformOperation(() =>
             {
-                var user = userModel.ToUser();
+                var user = this.repository.All()
+                    .FirstOrDefault(usr => usr.Username == userModel.Username.ToLower() &&
+                        usr.AuthCode == userModel.AuthCode);
+                if (user == null)
+                {
+                    throw new ServerErrorException("Invalid user authentication", "INV_USR_AUTH");
+                }
+
                 var sessionKey = this.repository.Login(user);
 
                 return new UserLoggedModel()
@@ -69,7 +75,27 @@ namespace BinaryWarfare.WebAPI.Controllers
         {
             var responseMsg = this.PerformOperation(() =>
             {
-                this.repository.Logout(sessionKey);
+                var user = this.repository.Get(sessionKey);
+            });
+
+            return responseMsg;
+        }
+        
+        [HttpGet]
+        [ActionName("getUsers")]
+        public HttpResponseMessage GetUsers(string sessionKey)
+        {
+            var responseMsg = this.PerformOperation(() =>
+            {
+                var allUsers = this.repository.All();
+                var meUser = allUsers.FirstOrDefault(usr => usr.SessionKey == sessionKey);
+                if (meUser == null)
+                {
+                    throw new ServerErrorException("Invalid user authentication", "INV_USR_AUTH");
+                }
+                var users = allUsers.Where(usr => usr.Id != meUser.Id);
+                IEnumerable<UserModel> usersModels = users.Select(u => new UserModel(u));
+                return users;
             });
 
             return responseMsg;
