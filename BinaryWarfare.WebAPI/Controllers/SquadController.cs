@@ -118,9 +118,7 @@ namespace BinaryWarfare.WebAPI.Controllers
                 {
                     var targetSum = -difference * 100;
                     var bounty = targetUser.Money - difference * 100 < 0 ? targetUser.Money : targetSum;
-
-                    System.Threading.Thread.Sleep(5000);
-
+                    
                     targetUser.Money = targetUser.Money - bounty;
                     attacker.User.Money = attacker.User.Money + bounty;
                 }
