@@ -15,7 +15,7 @@ namespace BinaryWarfare.Model
 
         public decimal Income { get; set; }
 
-        public bool Busy { get; set; }
+        public bool IsBusy { get; set; }
 
         public virtual Squad Squad { get; set; }
     }

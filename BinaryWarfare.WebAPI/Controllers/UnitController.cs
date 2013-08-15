@@ -29,7 +29,7 @@ namespace BinaryWarfare.WebAPI.Controllers
         {
             var responseMsg = this.PerformOperation(() =>
             {
-                var unit = new Unit() { Attack = 10, Defence = 12, Income = 5, Busy = false };
+                var unit = new Unit() { Attack = 10, Defence = 12, Income = 5, IsBusy = false };
 
                 this.repository.Add(unit, sessionKey);
 

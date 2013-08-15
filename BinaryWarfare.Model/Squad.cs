@@ -18,6 +18,8 @@ namespace BinaryWarfare.Model
 
         public string Name { get; set; }
 
+        public bool IsBusy { get; set; }
+
         public virtual ICollection<Unit> Units { get; set; }
     }
 }

@@ -15,7 +15,7 @@ namespace BinaryWarfare.WebAPI.Controllers
     [EnableCors(origins: "http://binarywarfareclient.apphb.com/", headers: "*", methods: "*")]
     public class SquadController : BaseApiController
     {
-        private SquadsRepository repository;
+        private ISquadsRepository repository;
 
         public SquadController()
         {
@@ -29,22 +29,27 @@ namespace BinaryWarfare.WebAPI.Controllers
         {
             var responseMsg = this.PerformOperation(() =>
             {
+                var user = ValidateUser(squad);
+
                 var newSquad = new Squad() { Name = squad.Name };
-                this.repository.Add(newSquad, squad.SessionKey);
+                user.Squads.Add(newSquad);
+
+                this.repository.Add(newSquad);
             });
 
             return responseMsg;
         }
-        
+
         [HttpGet]
         [ActionName("getInfo")]
         public HttpResponseMessage GetInfo(SquadModel squad)
         {
             var responseMsg = this.PerformOperation(() =>
             {
-                var dbSquad = this.repository.Get(squad.Id, squad.SessionKey);
-                var squadDetails = new SquadDetails(dbSquad);
-                return squadDetails;
+                var user = ValidateUser(squad);
+
+                var dbSquad = this.repository.Get(squad.Id);
+                return new SquadDetails(dbSquad);
             });
 
             return responseMsg;
@@ -52,11 +57,13 @@ namespace BinaryWarfare.WebAPI.Controllers
 
         [HttpGet]
         [ActionName("getSquads")]
-        public HttpResponseMessage GetSquads(string sessionKey)
+        public HttpResponseMessage GetSquads(SquadModel squad)
         {
             var responseMsg = this.PerformOperation(() =>
             {
-                
+                var user = ValidateUser(squad);
+
+
             });
 
             return responseMsg;
@@ -84,6 +91,16 @@ namespace BinaryWarfare.WebAPI.Controllers
             });
 
             return responseMsg;
+        }
+
+        private Model.User ValidateUser(SquadModel squad)
+        {
+            var user = this.repository.All().FirstOrDefault(s => s.UserId.SessionKey == squad.SessionKey).UserId;
+            if (user == null)
+            {
+                throw new ServerErrorException("Invalid user authentication", "INV_USR_AUTH");
+            }
+            return user;
         }
     }
 }

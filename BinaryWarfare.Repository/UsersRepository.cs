@@ -143,7 +143,13 @@ namespace BinaryWarfare.Repository
 
         public User Get(int id)
         {
-            throw new NotImplementedException("Method not supported for Users");
+            var user = this.entitySet.FirstOrDefault(u => u.Id == id);
+            if (user == null)
+            {
+                throw new ServerErrorException("Invalid user authentication", "INV_USR_AUTH");
+            }
+
+            return user;
         }
 
         public IQueryable<User> All()

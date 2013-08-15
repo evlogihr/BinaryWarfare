@@ -16,7 +16,7 @@ namespace BinaryWarfare.WebAPI.Models
             this.Attack = unit.Attack;
             this.Defence = unit.Defence;
             this.Income = unit.Income;
-            this.IsBusy = unit.Busy;
+            this.IsBusy = unit.IsBusy;
         }
 
         [DataMember(Name = "id")]
