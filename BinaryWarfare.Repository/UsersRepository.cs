@@ -157,12 +157,15 @@ namespace BinaryWarfare.Repository
             return this.entitySet;
         }
 
-        /* methods not implemented */
-
-        public User Update(int id, User item)
+        public User Update(int id, User user)
         {
-            throw new NotImplementedException("Method not supported for Users");
+            var dBUser = this.entitySet.FirstOrDefault(u => u.Id == id);
+            dBUser = user;
+            this.context.SaveChanges();
+            return dBUser;
         }
+
+        /* methods not implemented */
 
         public void Delete(int id)
         {

@@ -78,6 +78,8 @@ namespace BinaryWarfare.WebAPI.Controllers
         [ActionName("logout")]
         public HttpResponseMessage LogoutUser(string sessionKey)
         {
+            ValidateUser(sessionKey);
+
             var responseMsg = this.PerformOperation(() =>
             {
                 var user = this.repository.Get(sessionKey);
@@ -90,6 +92,8 @@ namespace BinaryWarfare.WebAPI.Controllers
         [ActionName("getUsers")]
         public HttpResponseMessage GetUsers(string sessionKey)
         {
+            ValidateUser(sessionKey);
+
             var responseMsg = this.PerformOperation(() =>
             {
                 var allUsers = this.repository.All();
@@ -123,5 +127,17 @@ namespace BinaryWarfare.WebAPI.Controllers
 
             return responseMsg;
         }
+        
+        private User ValidateUser(string sessionKey)
+        {
+            var user = this.repository.All().FirstOrDefault(u => u.SessionKey == sessionKey);
+            if (user == null)
+            {
+                throw new ServerErrorException("Invalid user sessionkey", "INV_USR_AUTH");
+            }
+
+            return user;
+        }
+
     }
 }

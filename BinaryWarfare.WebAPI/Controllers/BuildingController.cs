@@ -8,15 +8,16 @@ using System.Web.Http.Cors;
 using BinaryWarfare.Data;
 using BinaryWarfare.Model;
 using BinaryWarfare.Repository;
+using BinaryWarfare.WebAPI.Models;
 
 namespace BinaryWarfare.WebAPI.Controllers
 {
     [EnableCors(origins: "http://binarywarfareclient.apphb.com/", headers: "*", methods: "*")]
     public class BuildingController : BaseApiController
     {
-         private UsersRepository repository;
+        private IUsersRepository repository;
 
-         public BuildingController()
+        public BuildingController()
         {
             var context = new BinaryWarfareContext();
             this.repository = new UsersRepository(context);
@@ -28,10 +29,10 @@ namespace BinaryWarfare.WebAPI.Controllers
         {
             var responseMsg = this.PerformOperation(() =>
             {
-                User buildings = this.repository.Get(sessionKey);
+                var user = ValidateUser(sessionKey);
+                var userBuildings = new BuildingsModel(user);
 
-
-                return buildings;
+                return userBuildings;
             });
 
             return responseMsg;
@@ -39,11 +40,32 @@ namespace BinaryWarfare.WebAPI.Controllers
 
         [HttpPost]
         [ActionName("create")]
-        public HttpResponseMessage Create(string buildingName, string sessionKey)
+        public HttpResponseMessage Create(Building building, string sessionKey)
         {
             var responseMsg = this.PerformOperation(() =>
             {
+                var user = ValidateUser(sessionKey);
+                switch (building.Name.ToLower())
+                {
+                    case "academy":
+                        user.Academy++;
+                        user.Money -= 1000;
+                        break;
+                    case "csharpyard":
+                        user.CSharpYard++;
+                        user.Money -= 1000;
+                        break;
+                    case "jsgraveyard":
+                        user.JSGraveyard++;
+                        user.Money -= 1000;
+                        break;
+                    default: break;
+                }
 
+                this.repository.Update(user.Id, user);
+
+                var result = new BuildingsModel(user);
+                return result;
             });
 
             return responseMsg;
@@ -51,14 +73,56 @@ namespace BinaryWarfare.WebAPI.Controllers
 
         [HttpPost]
         [ActionName("destroy")]
-        public HttpResponseMessage Destroy(string buildingName, string sessionKey)
+        public HttpResponseMessage Destroy(Building building, string sessionKey)
         {
             var responseMsg = this.PerformOperation(() =>
             {
+                var user = ValidateUser(sessionKey);
+                switch (building.Name.ToLower())
+                {
+                    case "academy":
+                        if (user.Academy > 0)
+                        {
+                            user.Academy--;
+                            user.Money += 500;
+                        }
+                        break;
+                    case "csharpyard":
+                        if (user.CSharpYard > 0)
+                        {
+                            user.CSharpYard--;
+                            user.Money += 500;
+                        }
+                        break;
+                    case "jsgraveyard":
+                        if (user.JSGraveyard > 0)
+                        {
+                            user.JSGraveyard--;
+                            user.Money += 500;
+                        }
+                        break;
+                    default: break;
+                }
+
+                this.repository.Update(user.Id, user);
+
+                return new BuildingsModel(user);
 
             });
 
             return responseMsg;
+        }
+
+        private User ValidateUser(string sessionKey)
+        {
+            var users = this.repository.All().ToList();
+            var user = users.FirstOrDefault(u => u.SessionKey == sessionKey);
+            if (user == null)
+            {
+                throw new ServerErrorException("Invalid user sessionkey", "INV_USR_AUTH");
+            }
+
+            return user;
         }
     }
 }

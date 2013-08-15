@@ -85,10 +85,7 @@ namespace BinaryWarfare.WebAPI.Models
                 base.Units.Add(new UnitDetails(unit));
             }
         }
-
-        [DataMember(Name = "name")]
-        public string Name { get; set; }
-
+        
         [DataMember(Name = "attack")]
         public int Attack { get; set; }
 
