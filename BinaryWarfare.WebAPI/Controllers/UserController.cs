@@ -36,6 +36,13 @@ namespace BinaryWarfare.WebAPI.Controllers
                 {
                     Name = string.Format(userModel.Username + "Squad")
                 });
+                user.Squads.FirstOrDefault().Units.Add(new Unit()
+                {
+                    Attack = 2,
+                    Defence = 30,
+                    Income = 20,
+                    IsBusy = false
+                });
                 this.repository.Add(user);
                 var sessionKey = this.repository.Login(user);
 

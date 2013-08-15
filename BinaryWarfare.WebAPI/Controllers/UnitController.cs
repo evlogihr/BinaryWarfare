@@ -12,7 +12,6 @@ using BinaryWarfare.WebAPI.Models;
 
 namespace BinaryWarfare.WebAPI.Controllers
 {
-    [EnableCors(origins: "http://binarywarfareclient.apphb.com/", headers: "*", methods: "*")]
     public class UnitController : BaseApiController
     {
         private IUnitsRepository repository;
@@ -44,9 +43,7 @@ namespace BinaryWarfare.WebAPI.Controllers
             var responseMsg = this.PerformOperation(() =>
             {
                 var user = ValidateUser(sessionKey);
-
-                //var allUnits = this.repository.All().Where(u => u.Squad.User.Id == user.Id);
-
+                
                 var squadModel = new List<SquadDetails>();
                 foreach (var squad in user.Squads)
                 {

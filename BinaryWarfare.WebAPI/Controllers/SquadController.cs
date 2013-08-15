@@ -115,14 +115,23 @@ namespace BinaryWarfare.WebAPI.Controllers
                 int difference = totalDefence - totalAttack;
                 if (difference < 0)
                 {
-                    var targetSum = targetUser.Money - difference * 100;
-                    var bounty = targetSum < 0 ? targetUser.Money : targetSum;
-                    targetUser.Money -=  bounty;
-                    attacker.User.Money += bounty;
+                    var targetSum = -difference * 100;
+                    var bounty = targetUser.Money - difference * 100 < 0 ? targetUser.Money : targetSum;
+
+                    targetUser.Money = targetUser.Money - bounty;
+                    attacker.User.Money = attacker.User.Money + bounty;
                 }
 
                 this.repository.Update(attacker.Id, attacker);
 
+                var dbSquad = new List<SquadDetails>();
+                var squads = this.repository.All().Where(s => s.User.Id == attacker.User.Id).ToList();
+                foreach (var s in squads)
+                {
+                    dbSquad.Add(new SquadDetails(s));
+                }
+
+                return dbSquad;
             });
 
             return responseMsg;

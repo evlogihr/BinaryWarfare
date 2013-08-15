@@ -41,12 +41,15 @@ namespace BinaryWarfare.Repository
             return this.entitySet;
         }
 
-        //not impelemented
-
-        public Squad Update(int id, Squad item)
+        public Squad Update(int id, Squad updatedSquad)
         {
-            throw new NotImplementedException();
+            var squad = this.entitySet.FirstOrDefault(s => s.Id == id);
+            squad = updatedSquad;
+            this.context.SaveChanges();
+            return squad;
         }
+
+        //not impelemented
 
         public void Delete(int id)
         {
