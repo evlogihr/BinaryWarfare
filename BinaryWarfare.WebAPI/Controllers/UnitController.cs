@@ -28,9 +28,18 @@ namespace BinaryWarfare.WebAPI.Controllers
         {
             var responseMsg = this.PerformOperation(() =>
             {
+                var user = ValidateUser(sessionKey);
                 var unit = new Unit() { Attack = 10, Defence = 12, Income = 5, IsBusy = false };
 
                 this.repository.Add(unit);
+
+                var squadModel = new List<SquadDetails>();
+                foreach (var squad in user.Squads)
+                {
+                    squadModel.Add(new SquadDetails(squad));
+                }
+
+                return squadModel;
             });
 
             return responseMsg;
