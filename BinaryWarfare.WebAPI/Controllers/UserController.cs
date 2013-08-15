@@ -4,41 +4,58 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Web.Http;
+using System.Web.Http.Cors;
+using BinaryWarfare.Data;
+using BinaryWarfare.Model;
 using BinaryWarfare.Repository;
 using BinaryWarfare.WebAPI.Models;
 
 namespace BinaryWarfare.WebAPI.Controllers
 {
+    [EnableCors(origins: "http://http://binarywarfare.apphb.com/", headers: "*", methods: "*")]
     public class UserController : BaseApiController
     {
+        private UsersRepository repository;
+
+        public UserController()
+        {
+            var context = new BinaryWarfareContext();
+            this.repository = new UsersRepository(context);
+        }
+
         [HttpPost]
         [ActionName("register")]
-        public HttpResponseMessage RegisterUser(UserLoginModel user)
+        public HttpResponseMessage RegisterUser(UserLoginModel userModel)
         {
             var responseMsg =
                 this.PerformOperation(() =>
             {
-                UsersRepository.CreateUser(user.Username, user.AuthCode);
-                var sessionKey = UsersRepository.LoginUser(user.Username, user.AuthCode);
+                var user = userModel.ToUser();
+                this.repository.Add(user);
+                var sessionKey = this.repository.Login(user);
+
                 return new UserLoggedModel()
                 {
-                    Username = user.Username,
+                    Username = userModel.Username,
                     SessionKey = sessionKey
                 };
             });
+
             return responseMsg;
         }
 
         [HttpPost]
         [ActionName("login")]
-        public HttpResponseMessage LoginUser(UserLoginModel user)
+        public HttpResponseMessage LoginUser(UserLoginModel userModel)
         {
             var responseMsg = this.PerformOperation(() =>
             {
-                var sessionKey = UsersRepository.LoginUser(user.Username, user.AuthCode);
+                var user = userModel.ToUser();
+                var sessionKey = this.repository.Login(user);
+
                 return new UserLoggedModel()
                 {
-                    Username = user.Username,
+                    Username = userModel.Username,
                     SessionKey = sessionKey
                 };
             });
@@ -52,7 +69,7 @@ namespace BinaryWarfare.WebAPI.Controllers
         {
             var responseMsg = this.PerformOperation(() =>
             {
-                UsersRepository.LogoutUser(sessionKey);
+                this.repository.Logout(sessionKey);
             });
 
             return responseMsg;

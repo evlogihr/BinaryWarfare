@@ -1,13 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using BinaryWarfare.Data;
 using BinaryWarfare.Model;
 
 namespace BinaryWarfare.Repository
 {
-    public class UsersRepository : BaseRepository
+    public class UsersRepository : BaseRepository, IRepository<User>
     {
         private const string SessionKeyChars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
         private const int SessionKeyLen = 50;
@@ -17,7 +19,15 @@ namespace BinaryWarfare.Repository
         private const int MinUsernameNicknameChars = 3;
         private const int MaxUsernameNicknameChars = 30;
 
-        private static void ValidateSessionKey(string sessionKey)
+        private DbSet<User> entitySet;
+
+        public UsersRepository(DbContext dbContent)
+            : base(dbContent)
+        {
+            this.entitySet = this.context.Set<User>();
+        }
+
+        private void ValidateSessionKey(string sessionKey)
         {
             if (sessionKey.Length != SessionKeyLen || sessionKey.Any(ch => !SessionKeyChars.Contains(ch)))
             {
@@ -25,7 +35,7 @@ namespace BinaryWarfare.Repository
             }
         }
 
-        private static string GenerateSessionKey(int userId)
+        private string GenerateSessionKey(int userId)
         {
             StringBuilder keyChars = new StringBuilder(50);
             keyChars.Append(userId.ToString());
@@ -43,7 +53,7 @@ namespace BinaryWarfare.Repository
             return sessionKey;
         }
 
-        private static void ValidateUsername(string username)
+        private void ValidateUsername(string username)
         {
             if (username == null || username.Length < MinUsernameNicknameChars || username.Length > MaxUsernameNicknameChars)
             {
@@ -54,8 +64,8 @@ namespace BinaryWarfare.Repository
                 throw new ServerErrorException("Username contains invalid characters", "INV_USRNAME_CHARS");
             }
         }
-        
-        private static void ValidateAuthCode(string authCode)
+
+        private void ValidateAuthCode(string authCode)
         {
             if (authCode.Length != Sha1CodeLength)
             {
@@ -65,82 +75,54 @@ namespace BinaryWarfare.Repository
 
         /* public members */
 
-        public static void CreateUser(string username, string authCode)
+        public User Add(User user)
         {
-            ValidateUsername(username);
-            ValidateAuthCode(authCode);
-            using (BinaryWarfareContext context = new BinaryWarfareContext())
+            ValidateUsername(user.Username);
+            ValidateAuthCode(user.AuthCode);
+            var usernameToLower = user.Username.ToLower();
+
+            var dbUser = this.entitySet.FirstOrDefault(u => u.Username.ToLower() == usernameToLower);
+
+            if (dbUser != null)
             {
-                var usernameToLower = username.ToLower();
-
-                var dbUser = context.Users.FirstOrDefault(u => u.Username.ToLower() == usernameToLower);
-
-                if (dbUser != null)
+                if (dbUser.Username.ToLower() == usernameToLower)
                 {
-                    if (dbUser.Username.ToLower() == usernameToLower)
-                    {
-                        throw new ServerErrorException("Username already exists", "ERR_DUP_USR");
-                    }
-                    else
-                    {
-                        throw new ServerErrorException("Nickname already exists", "ERR_DUP_NICK");
-                    }
+                    throw new ServerErrorException("Username already exists", "ERR_DUP_USR");
                 }
-
-                dbUser = new User()
+                else
                 {
-                    Username = usernameToLower,
-                    AuthCode = authCode
-                };
-                context.Users.Add(dbUser);
-                context.SaveChanges();
+                    throw new ServerErrorException("Nickname already exists", "ERR_DUP_NICK");
+                }
             }
 
+            this.entitySet.Add(user);
+            this.context.SaveChanges();
+            return user;
         }
 
-        public static string LoginUser(string username, string authCode)
+        public string Login(User user)
         {
-            ValidateUsername(username);
-            ValidateAuthCode(authCode);
-            var context = new BinaryWarfareContext();
-            using (context)
-            {
-                var usernameToLower = username.ToLower();
-                var user = context.Users.FirstOrDefault(u => u.Username.ToLower() == usernameToLower && u.AuthCode == authCode);
-                if (user == null)
-                {
-                    throw new ServerErrorException("Invalid user authentication", "INV_USR_AUTH");
-                }
+            ValidateUsername(user.Username);
+            ValidateAuthCode(user.AuthCode);
 
-                var sessionKey = GenerateSessionKey((int)user.Id);
-                user.SessionKey = sessionKey;
-                context.SaveChanges();
-                return sessionKey;
+            var dbUser = this.entitySet.FirstOrDefault(u => u.Username.ToLower() == user.Username.ToLower() && u.AuthCode == user.AuthCode);
+            if (dbUser == null)
+            {
+                throw new ServerErrorException("Invalid user authentication", "INV_USR_AUTH");
             }
+
+            var sessionKey = GenerateSessionKey((int)user.Id);
+            dbUser.SessionKey = sessionKey;
+            context.SaveChanges();
+            return sessionKey;
         }
 
-        public static int LoginUser(string sessionKey)
+        public void Logout(string sessionKey)
         {
             ValidateSessionKey(sessionKey);
-            var context = new BinaryWarfareContext();
             using (context)
             {
-                var user = context.Users.FirstOrDefault(u => u.SessionKey == sessionKey);
-                if (user == null)
-                {
-                    throw new ServerErrorException("Invalid user authentication", "INV_USR_AUTH");
-                }
-                return (int)user.Id;
-            }
-        }
-
-        public static void LogoutUser(string sessionKey)
-        {
-            ValidateSessionKey(sessionKey);
-            var context = new BinaryWarfareContext();
-            using (context)
-            {
-                var user = context.Users.FirstOrDefault(u => u.SessionKey == sessionKey);
+                var user = this.entitySet.FirstOrDefault(u => u.SessionKey == sessionKey);
                 if (user == null)
                 {
                     throw new ServerErrorException("Invalid user authentication", "INV_USR_AUTH");
@@ -148,6 +130,38 @@ namespace BinaryWarfare.Repository
                 user.SessionKey = null;
                 context.SaveChanges();
             }
+        }
+
+        /* methods not implemented */
+
+        public User Update(int id, User item)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Delete(int id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Delete(User item)
+        {
+            throw new NotImplementedException();
+        }
+
+        public User Get(int id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IQueryable<User> All()
+        {
+            throw new NotImplementedException();
+        }
+
+        public IQueryable<User> Find(Expression<Func<User, int, bool>> predicate)
+        {
+            throw new NotImplementedException();
         }
     }
 }
