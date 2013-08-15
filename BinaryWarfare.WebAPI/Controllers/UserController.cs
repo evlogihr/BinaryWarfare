@@ -9,6 +9,7 @@ using BinaryWarfare.Data;
 using BinaryWarfare.Model;
 using BinaryWarfare.Repository;
 using BinaryWarfare.WebAPI.Models;
+using System.Web;
 
 namespace BinaryWarfare.WebAPI.Controllers
 {
@@ -115,17 +116,34 @@ namespace BinaryWarfare.WebAPI.Controllers
             return responseMsg;
         }
 
-        [HttpGet]
+        [HttpPost]
         [ActionName("uploadAvatar")]
-        public HttpResponseMessage UploadAvatar(string sessionKey, string avatarPath)
+        public HttpResponseMessage UploadAvatar(string sessionKey) 
         {
-            var responseMsg = this.PerformOperation(() =>
-            {
-                var user = this.repository.Get(sessionKey);
-                user.AvatarUrl = AvatarModel.GetMediaLink(avatarPath, user.Username.ToLower());
-            });
+            HttpResponseMessage result = null; 
+            var httpRequest = HttpContext.Current.Request; 
 
-            return responseMsg;
+            var user = this.repository.Get(sessionKey);
+
+            if (httpRequest.Files.Count > 0) 
+            {
+                foreach (string file in httpRequest.Files) 
+                {
+                    var postedFile = httpRequest.Files[file]; 
+                    var filePath = HttpContext.Current.Server.MapPath("~/App_Data/" + postedFile.FileName); 
+
+                    postedFile.SaveAs(filePath); 
+                    user.AvatarUrl = AvatarModel.GetMediaLink(filePath, user.Username.ToLower()); 
+                }
+
+                result = Request.CreateResponse(HttpStatusCode.Created, user.AvatarUrl); 
+            } 
+            else 
+            {
+                result = Request.CreateResponse(HttpStatusCode.BadRequest); 
+            }
+
+            return result; 
         }
         
         private User ValidateUser(string sessionKey)
