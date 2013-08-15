@@ -89,7 +89,8 @@ namespace BinaryWarfare.WebAPI.Controllers
 
         private User ValidateUser(string sessionKey)
         {
-            var unit = this.repository.All().FirstOrDefault(s => s.Squad.User.SessionKey == sessionKey);
+            var units = this.repository.All().ToList();
+            var unit = units.FirstOrDefault(s => s.Squad.User.SessionKey == sessionKey);
             if (unit == null)
             {
                 throw new ServerErrorException("Invalid squad", "INV_SQD_AUTH");
